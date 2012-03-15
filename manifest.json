@@ -1,0 +1,11 @@
+{
+	"name": "SMF Keys"
+	"version": "0.1",
+	"description": "Keyboard shortcuts for Simple Machines Forum."
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["jquery-1.5.min.js", "smfkeys.js"]
+		}
+	]
+}
