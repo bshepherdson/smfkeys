@@ -14,6 +14,11 @@ chrome.extension.sendRequest({ type: 'get', site: document.location.hostname }, 
 
 function handleGet(response) {
   SMFKeys.data = response;
+  focusRow();
+}
+
+function saveState() {
+  chrome.extension.sendRequest({ type: 'put', site: document.location.hostname, state: SMFKeys.data });
 }
 
 function keyPress(event) {
@@ -49,12 +54,29 @@ function countRows() {
   return getRows().length;
 }
 
+// Focuses the currently selected row.
+function focusRow() {
+  var row = getRows()[SMFKeys.data[SMFKeys.state].position];
+  if(row) {
+    row.style.cssText = 'background: red';
+  }
+}
+
+// Unfocuses the currently selected row.
+function blurRow() {
+  var row = getRows()[SMFKeys.data[SMFKeys.state].position];
+  if(row) {
+    row.style.cssText = '';
+  }
+}
 
 
 // Command handlers
 function moveDown() { // j
+  window.console.log('moveDown');
   var rows = countRows();
   if(SMFKeys.data[SMFKeys.state].position < countRows() - 1) {
+    blurRow();
     SMFKeys.data[SMFKeys.state].position++;
     focusRow();
     saveState();
@@ -62,7 +84,9 @@ function moveDown() { // j
 }
 
 function moveUp() { // k
+  window.console.log('moveUp');
   if(SMFKeys.data[SMFKeys.state].position > 0) {
+    blurRow();
     SMFKeys.data[SMFKeys.state].position--;
     focusRow();
     saveState();
