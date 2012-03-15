@@ -4,8 +4,9 @@
 	"description": "Keyboard shortcuts for Simple Machines Forum."
 	"content_scripts": [
 		{
-			"matches": ["<all_urls>"],
+			"matches": ["http://1strangers.us/forum/*"]
 			"js": ["jquery-1.5.min.js", "smfkeys.js"]
 		}
-	]
+	],
+    "background_page": "background.html"
 }

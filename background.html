@@ -1,0 +1,39 @@
+<html><head>
+<script src="jquery-1.5.min.js"></script>
+<script type="text/javascript">
+
+var States = {
+  INDEX: 1,
+  BOARD: 2,
+  THREAD: 3,
+  OFF: 4,
+};
+
+var sites = {};
+
+function onRequest(request, sender, callback) {
+  if(request.type = 'get') {
+    if(!sites[request.site]) {
+      sites[request.site] = newState();
+    }
+
+    callback(sites[request.site]);
+  } else if(request.type = 'put') {
+    sites[request.site] = request.state;
+  }
+}
+
+function newState() {
+  var data = [];
+  data[States.INDEX] = { position: 0 };
+  data[States.BOARD] = { position: 0 };
+  data[States.THREAD] = { position: 0 };
+  return data;
+}
+ 
+$("document").ready(function() {
+	chrome.extension.onRequest.addListener(onRequest);
+});
+
+</script></head><body></body></html>
+
