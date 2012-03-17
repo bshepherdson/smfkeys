@@ -138,7 +138,7 @@ function getRow(a, b) {
     index = SMFKeys.data[SMFKeys.state].position;
   }
 
-  getRows().eq(index).each(f);
+  getRows().eq(index).each(function() { f.call(this, index) });
 }
 
 // Returns the number of rows in the current state by counting the appropriate DOM elements.
@@ -148,7 +148,7 @@ function countRows() {
 
 // Focuses the currently selected row.
 function focusRow() {
-  getRow(function() {
+  getRow(function(index) {
     var row = $(this);
 
     if(SMFKeys.state == States.INDEX) {
@@ -165,7 +165,7 @@ function focusRow() {
     var windowHeight = $(window).height();
 
     if(SMFKeys.state == States.TOPIC) { // always scroll the post to the top of the screen for topics.
-      window.scrollTo(0, rowTop);
+      window.scrollTo(0, index == 0 ? rowTop-70 : rowTop);
     } else if(rowTop < window.scrollY) { // need to scroll up
       window.scrollTo(0, rowTop);
     } else if (rowBottom > window.scrollY + windowHeight) { // need to scroll down
