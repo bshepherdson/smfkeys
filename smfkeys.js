@@ -59,13 +59,7 @@ function getRows() {
 }
 
 function getRow(index, f) {
-  if(SMFKeys.state == States.INDEX) {
-    $('tbody[class="content"] tr').eq(index).each(f);
-  } else if(SMFKeys.state == States.BOARD) {
-    $('div[id="messageindex"] table tbody tr').eq(index).each(f);
-  } else if(SMFKeys.state == States.THREAD) {
-    $('div[class="post_wrapper"]').eq(index).each(f);
-  }
+  getRows().eq(index).each(f);
 }
 
 // Returns the number of rows in the current state by counting the appropriate DOM elements.
@@ -75,41 +69,35 @@ function countRows() {
 
 // Focuses the currently selected row.
 function focusRow() {
-  var index = SMFKeys.data[SMFKeys.state].position;
-  var row = getRows()[index];
-  if(row) {
+  getRow(SMFKeys.data[SMFKeys.state].position, function() {
+    var row = $(this);
+
     if(SMFKeys.state == States.INDEX) {
-      row.style.cssText = 'background: red';
+      row.attr('style', 'background: red');
     } else if(SMFKeys.state == States.BOARD) {
-      row.style.cssText = 'border-left: 3px solid red';
+      row.attr('style', 'border-left: 3px solid red');
     }
 
-    getRow(index, function() {
-      var row = $(this);
-      var rowTop = row.offset().top;
-      var rowHeight = row[0].offsetHeight;
-      var rowBottom = rowTop + rowHeight;
-      var windowHeight = $(window).height();
+    var rowTop = row.offset().top;
+    var rowHeight = row[0].offsetHeight;
+    var rowBottom = rowTop + rowHeight;
+    var windowHeight = $(window).height();
 
-      if(rowTop < window.scrollY) { // need to scroll up
+    if(rowTop < window.scrollY) { // need to scroll up
+      window.scrollTo(0, rowTop);
+    } else if (rowBottom > window.scrollY + windowHeight) { // need to scroll down
+      if(rowHeight > windowHeight) { // doesn't fit, scroll to rowTop
         window.scrollTo(0, rowTop);
-      } else if (rowBottom > window.scrollY + windowHeight) { // need to scroll down
-        if(rowHeight > windowHeight) { // doesn't fit, scroll to rowTop
-          window.scrollTo(0, rowTop);
-        } else { // does fit, scroll down to put it at the bottom.
-          window.scrollTo(0, rowBottom - windowHeight);
-        }
+      } else { // does fit, scroll down to put it at the bottom.
+        window.scrollTo(0, rowBottom - windowHeight);
       }
-    });
-  }
+    }
+  });
 }
 
 // Unfocuses the currently selected row.
 function blurRow() {
-  var row = getRows()[SMFKeys.data[SMFKeys.state].position];
-  if(row) {
-    row.style.cssText = '';
-  }
+  getRow(SMFKeys.data[SMFKeys.state].position, function() { $(this).attr('style', ''); });
 }
 
 
