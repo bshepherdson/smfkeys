@@ -2,7 +2,7 @@
 var States = {
   INDEX: 1,
   BOARD: 2,
-  THREAD: 3,
+  TOPIC: 3,
   OFF: 4,
 };
 
@@ -16,7 +16,6 @@ chrome.extension.sendRequest({ type: 'get', site: document.location.hostname }, 
 
 function handleGet(response) {
   SMFKeys.data = response;
-  window.console.log(SMFKeys.data);
   SMFKeys.ready = true;
   maybeInit();
 }
@@ -39,6 +38,12 @@ function keyPress(event) {
     case 107: // k
       moveUp();
       break;
+    case 111: // o
+      open();
+      break;
+    case 117: // u
+      up();
+      break;
     default:
       return;
   }
@@ -52,14 +57,24 @@ function getRows() {
     return $('tbody[class="content"] tr');
   } else if(SMFKeys.state == States.BOARD) {
     return $('div[id="messageindex"] table tbody tr');
-  } else if(SMFKeys.state == States.THREAD) {
+  } else if(SMFKeys.state == States.TOPIC) {
     return $('div[class="post_wrapper"]');
   } else {
     return [];
   }
 }
 
-function getRow(index, f) {
+function getRow(a, b) {
+  var index;
+  var f;
+  if(b) {
+    index = a;
+    f = b;
+  } else {
+    f = a;
+    index = SMFKeys.data[SMFKeys.state].position;
+  }
+
   getRows().eq(index).each(f);
 }
 
@@ -70,14 +85,14 @@ function countRows() {
 
 // Focuses the currently selected row.
 function focusRow() {
-  getRow(SMFKeys.data[SMFKeys.state].position, function() {
+  getRow(function() {
     var row = $(this);
 
     if(SMFKeys.state == States.INDEX) {
       row.attr('style', 'background: red');
     } else if(SMFKeys.state == States.BOARD) {
       row.attr('style', 'border-left: 3px solid red');
-    } else if(SMFKeys.state == States.THREAD) {
+    } else if(SMFKeys.state == States.TOPIC) {
       row.attr('style', 'border-left: 3px solid red');
     }
 
@@ -100,13 +115,12 @@ function focusRow() {
 
 // Unfocuses the currently selected row.
 function blurRow() {
-  getRow(SMFKeys.data[SMFKeys.state].position, function() { $(this).attr('style', ''); });
+  getRow(function() { $(this).attr('style', ''); });
 }
 
 
 // Command handlers
 function moveDown() { // j
-  window.console.log('moveDown');
   var rows = countRows();
   if(SMFKeys.data[SMFKeys.state].position < countRows() - 1) {
     blurRow();
@@ -117,12 +131,34 @@ function moveDown() { // j
 }
 
 function moveUp() { // k
-  window.console.log('moveUp');
   if(SMFKeys.data[SMFKeys.state].position > 0) {
     blurRow();
     SMFKeys.data[SMFKeys.state].position--;
     focusRow();
     saveState();
+  }
+}
+
+
+function open() { // o
+  if(SMFKeys.state == States.INDEX) {
+    getRow(function(){
+      window.location = $('a.subject', this).attr('href');
+    });
+  } else if(SMFKeys.state == States.BOARD) {
+    getRow(function(){
+      window.location = $('strong a', this).attr('href');
+    });
+  }
+  // No 'open' on topic.
+}
+
+function up() { // u
+  if(SMFKeys.state == States.BOARD) {
+    document.location.search = ''; // up to index.php
+  } else if(SMFKeys.state == States.TOPIC) {
+    var matches = $('.navigate_section a[href*="?board="]');
+    window.location = matches.first().attr('href');
   }
 }
 
@@ -136,11 +172,10 @@ $("document").ready(function() {
   if(path.indexOf('board=') >= 0) {
     SMFKeys.state = States.BOARD;
   } else if(path.indexOf('topic=') >= 0) {
-    SMFKeys.state = States.THREAD;
+    SMFKeys.state = States.TOPIC;
   } else if(document.location.pathname.match(/index.php$/) && !path) {
     SMFKeys.state = States.INDEX;
   }
   SMFKeys.loaded = true;
   maybeInit();
-  window.console.log(SMFKeys.state);
 });
