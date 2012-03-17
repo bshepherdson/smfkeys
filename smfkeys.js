@@ -97,6 +97,16 @@ function keyPress(event) {
     case 99: // c
       SMFKeys.loaded && newTopic();
       break;
+
+    case 113: // q
+      SMFKeys.loaded && quote();
+      break;
+    case 101: // e
+      SMFKeys.loaded && edit();
+      break;
+    case 105: // i
+      SMFKeys.loaded && toIndex();
+      break;
     default:
       return;
   }
@@ -263,6 +273,31 @@ function reply() {
 function newTopic() {
   if(SMFKeys.state == States.BOARD) {
     window.location = $('.buttonlist .button_strip_new_topic').first().attr('href');
+  }
+}
+
+function quote() {
+  if(SMFKeys.state == States.TOPIC) {
+    getRow(function() {
+      window.location = $('.quote_button a', this).attr('href');
+    });
+  }
+}
+
+function edit() {
+  if(SMFKeys.state == States.TOPIC) {
+    getRow(function() {
+      var button = $('.modify_button a', this);
+      if(button.length > 0) {
+        window.location = button.attr('href');
+      }
+    });
+  }
+}
+
+function toIndex() {
+  if(SMFKeys.state != States.INDEX) {
+    document.location.search = '';
   }
 }
 
