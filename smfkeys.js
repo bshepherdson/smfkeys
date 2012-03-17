@@ -64,6 +64,10 @@ function saveState() {
 }
 
 function keyPress(event) {
+  if(SMFKeys.helpVisible) {
+    hideHelp();
+    return;
+  }
   if(!SMFKeys.enabled) {
     return;
   }
@@ -106,6 +110,13 @@ function keyPress(event) {
       break;
     case 105: // i
       SMFKeys.loaded && toIndex();
+      break;
+    case 63: // ?
+      if(SMFKeys.helpVisible) {
+        hideHelp();
+      } else {
+        showHelp();
+      }
       break;
     default:
       return;
@@ -299,6 +310,51 @@ function toIndex() {
   if(SMFKeys.state != States.INDEX) {
     document.location.search = '';
   }
+}
+
+
+function showHelp() {
+  if(!SMFKeys.helpOverlay) {
+    var overlay = $(document.createElement('div'));
+    overlay.css('background', 'white');
+    overlay.css('color', 'black');
+    overlay.css('z-index', '100');
+    overlay.css('width', '300px');
+    overlay.css('height', '90%');
+    overlay.css('overflow-y', 'auto');
+    overlay.css('position', 'fixed');
+    overlay.css('top', '20px');
+    overlay.css('right', '20px');
+    overlay.css('padding', '5px');
+    overlay.css('border', '2px solid black');
+    overlay.css('border-radius', '5px 5px 5px 5px');
+
+    overlay.html('<table style="text-align: left"><tr><th style="min-width: 40px">Key</th><th>Function</th></tr>' +
+        '<tr><td>?</td><td>Open/close this help</td></tr>' +
+        '<tr><td>j</td><td>Move down</td></tr>' +
+        '<tr><td>k</td><td>Move up</td></tr>' +
+        '<tr><td>o</td><td>Open selected item</td></tr>' +
+        '<tr><td>n</td><td>Open topic at first unread post</td></tr>' +
+        '<tr><td>u</td><td>Go up (topic -> board -> index)</td></tr>' +
+        '<tr><td>i</td><td>Go to index</td></tr>' +
+        '<tr><td>m</td><td>Go to PMs</td></tr>' +
+        '<tr><td>c</td><td>On board: create new topic</td></tr>' +
+        '<tr><td>r</td><td>On topic: reply. Elsewhere: refresh</td></tr>' +
+        '<tr><td>q</td><td>On topic: quote this post</td></tr>' +
+        '<tr><td>e</td><td>On topic: edit this post</td></tr>' +
+        '</table>');
+
+    SMFKeys.helpOverlay = overlay;
+    $('body').append(overlay);
+  }
+
+  SMFKeys.helpOverlay.show();
+  SMFKeys.helpVisible = true;
+}
+
+function hideHelp() {
+  SMFKeys.helpOverlay.hide();
+  SMFKeys.helpVisible = false;
 }
 
 
