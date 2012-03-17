@@ -4,6 +4,7 @@ var States = {
   INDEX: 1,
   BOARD: 2,
   TOPIC: 3,
+  POST: 4,
 };
 
 var SMFKeys = {};
@@ -33,6 +34,14 @@ function maybeInit() {
           break;
         }
       }
+    } 
+    // If posting, focus the post box.
+    else if(SMFKeys.state == States.POST) {
+      var catbar = $('.cat_bar');
+      window.scrollTo(0, $('.cat_bar').first().scrollTop());
+      var editor = $('textarea');
+      $('textarea').focus();
+      return;
     }
 
     focusRow();
@@ -62,7 +71,11 @@ function keyPress(event) {
       up();
       break;
     case 114: // r
-      refresh();
+      if(SMFKeys.state == States.TOPIC) {
+        reply();
+      } else {
+        refresh();
+      }
       break;
     case 110: // n
       SMFKeys.loaded && openNew();
@@ -206,6 +219,10 @@ function messages() {
   document.location.search = '?action=pm';
 }
 
+function reply() {
+  window.location = $('.buttonlist .button_strip_reply').first().attr('href');
+}
+
 
 
 $("document").ready(function() {
@@ -216,14 +233,17 @@ $("document").ready(function() {
 
   // Determine state from the URL.
   var path = document.location.search;
-  if(path.indexOf('board=') >= 0) {
+  if(path.indexOf('?board=') >= 0) {
     SMFKeys.state = States.BOARD;
-  } else if(path.indexOf('topic=') >= 0) {
+  } else if(path.indexOf('?topic=') >= 0) {
     SMFKeys.state = States.TOPIC;
+  } else if(path.indexOf('?action=post') >= 0) {
+    SMFKeys.state = States.POST;
   } else if(document.location.pathname.match(/index.php$/) && !path) {
     SMFKeys.state = States.INDEX;
   }
 
+  window.console.log(SMFKeys.state);
   if(SMFKeys.state && SMFKeys.state != States.OFF) {
     SMFKeys.loaded = true;
     maybeInit();
