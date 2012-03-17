@@ -44,10 +44,14 @@ function maybeInit() {
     }
     // If posting, focus the post box.
     else if(SMFKeys.state == States.POST) {
-      var catbar = $('.cat_bar');
       window.scrollTo(0, $('.cat_bar').first().scrollTop());
-      var editor = $('textarea');
-      $('textarea').focus();
+      if(document.location.search.indexOf('topic') >= 0) {
+        // A reply, focus the text box.
+        $('textarea').focus();
+      } else {
+        // A new topic, focus the subject box.
+        $('input[name="subject"]').focus();
+      }
       return;
     }
 
@@ -89,6 +93,9 @@ function keyPress(event) {
       break;
     case 109: // m
       SMFKeys.loaded && messages();
+      break;
+    case 99: // c
+      SMFKeys.loaded && newTopic();
       break;
     default:
       return;
@@ -261,6 +268,9 @@ function reply() {
   window.location = $('.buttonlist .button_strip_reply').first().attr('href');
 }
 
+function newTopic() {
+  window.location = $('.buttonlist .button_strip_new_topic').first().attr('href');
+}
 
 
 $("document").ready(function() {

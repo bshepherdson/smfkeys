@@ -1,6 +1,7 @@
 {
 	"name": "SMF Keys",
-	"version": "0.1",
+	"version": "0.3",
+    "icons": { "128": "icon.png" },
 	"description": "Keyboard shortcuts for Simple Machines Forum.",
 	"content_scripts": [
 		{
