@@ -269,7 +269,9 @@ function reply() {
 }
 
 function newTopic() {
-  window.location = $('.buttonlist .button_strip_new_topic').first().attr('href');
+  if(SMFKeys.state == States.BOARD) {
+    window.location = $('.buttonlist .button_strip_new_topic').first().attr('href');
+  }
 }
 
 
