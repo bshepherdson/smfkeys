@@ -200,26 +200,18 @@ function moveUp() { // k
 
 function page(delta) {
   var linkbar = $('.pagelinks');
-  var links = $('a', linkbar.first());
+  var page = $('strong', linkbar).first();
+  var links = page.parent().children();
 
-  var page = 1;
-  for(; page <= links.length; page++) {
-    if(links.eq(page-1).text() > page) {
+  var index = 0;
+  for(; index < links.length; index++) {
+    if(links.eq(index).is('strong')) {
       break;
     }
   }
-  // Now page stores the page number we're on currently.
-  page--; // zero-base it
-
-  // If delta > 0, we should click the page+delta-1st link.
-  // If delta < 0, we should click the page+delta'th link.
-  var link;
-  if(delta > 0) {
-    link = links[page+delta-1];
-  } else if(delta < 0) {
-    link = links[page+delta];
+  if(index+delta >= 0 && index+delta < links.length) {
+    window.location = links.eq(index+delta).attr('href');
   }
-  window.location = link.href;
 }
 
 
