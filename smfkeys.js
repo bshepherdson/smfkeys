@@ -16,6 +16,7 @@ chrome.extension.sendRequest({ type: 'get', site: document.location.hostname }, 
 
 function handleGet(response) {
   SMFKeys.data = response;
+  window.console.log(SMFKeys.data);
   SMFKeys.ready = true;
   maybeInit();
 }

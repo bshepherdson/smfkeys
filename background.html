@@ -12,14 +12,15 @@ var States = {
 var sites = {};
 
 function onRequest(request, sender, callback) {
-  if(request.type = 'get') {
+  if(request.type == 'get') {
     if(!sites[request.site]) {
       sites[request.site] = newState();
     }
 
     callback(sites[request.site]);
-  } else if(request.type = 'put') {
+  } else if(request.type == 'put') {
     sites[request.site] = request.state;
+    saveState();
   }
 }
 
@@ -30,9 +31,31 @@ function newState() {
   data[States.THREAD] = { position: 0 };
   return data;
 }
+
+function saveState() {
+  var siteNames = [];
+  for(var site in sites) {
+    siteNames.push(site);
+    localStorage[site + '_index']  = sites[site][States.INDEX].position;
+    localStorage[site + '_board']  = sites[site][States.BOARD].position;
+    localStorage[site + '_thread'] = sites[site][States.THREAD].position;
+  }
+
+  localStorage['siteNames'] = '["' + siteNames.join('","') + '"]';
+}
+
+function loadState() {
+  var siteNames = eval(localStorage['siteNames']);
+  for(var i = 0; i < siteNames.length; i++) {
+    sites[siteNames[i]][States.INDEX].position = localStorage[site + '_index'];
+    sites[siteNames[i]][States.BOARD].position = localStorage[site + '_board'];
+    sites[siteNames[i]][States.THREAD].position = localStorage[site + '_thread'];
+  }
+}
  
 $("document").ready(function() {
 	chrome.extension.onRequest.addListener(onRequest);
+    loadState();
 });
 
 </script></head><body></body></html>
