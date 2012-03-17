@@ -1,9 +1,9 @@
 
 var States = {
+  OFF: 0,
   INDEX: 1,
   BOARD: 2,
   TOPIC: 3,
-  OFF: 4,
 };
 
 var SMFKeys = {};
@@ -22,6 +22,18 @@ function handleGet(response) {
 
 function maybeInit() {
   if(SMFKeys.ready && SMFKeys.loaded) {
+    // Focus the New row when viewing a topic with the New link.
+    if(SMFKeys.state == States.TOPIC && document.location.hash == '#new') {
+      var target = $('#new + div')[0];
+      var rows = getRows();
+      for(var i = 0; i < rows.length; i++) {
+        if(rows[i].offsetTop == target.offsetTop) {
+          SMFKeys.data[States.TOPIC].position = i;
+          break;
+        }
+      }
+    }
+
     focusRow();
   }
 }
@@ -33,16 +45,25 @@ function saveState() {
 function keyPress(event) {
   switch(event.keyCode) {
     case 106: // j
-      moveDown();
+      SMFKeys.loaded && moveDown();
       break;
     case 107: // k
-      moveUp();
+      SMFKeys.loaded && moveUp();
       break;
     case 111: // o
-      open();
+      SMFKeys.loaded && open();
       break;
     case 117: // u
       up();
+      break;
+    case 114: // r
+      refresh();
+      break;
+    case 110: // n
+      SMFKeys.loaded && openNew();
+      break;
+    case 109: // m
+      SMFKeys.loaded && messages();
       break;
     default:
       return;
@@ -154,12 +175,30 @@ function open() { // o
 }
 
 function up() { // u
-  if(SMFKeys.state == States.BOARD) {
-    document.location.search = ''; // up to index.php
-  } else if(SMFKeys.state == States.TOPIC) {
+  if(SMFKeys.state == States.TOPIC) {
     var matches = $('.navigate_section a[href*="?board="]');
     window.location = matches.first().attr('href');
+  } else {
+    // From anywhere but a topic, this goes to the index.
+    document.location.search = ''; // up to index.php
   }
+}
+
+
+function refresh() {
+  document.location.reload();
+}
+
+function openNew() {
+  if(SMFKeys.state == States.BOARD) { // only makes sense on boards
+    getRow(function() {
+      window.location = $('a[id^=newicon]', this).attr('href');
+    });
+  }
+}
+
+function messages() {
+  document.location.search = '?action=pm';
 }
 
 
@@ -176,6 +215,9 @@ $("document").ready(function() {
   } else if(document.location.pathname.match(/index.php$/) && !path) {
     SMFKeys.state = States.INDEX;
   }
-  SMFKeys.loaded = true;
-  maybeInit();
+
+  if(SMFKeys.state && SMFKeys.state != States.OFF) {
+    SMFKeys.loaded = true;
+    maybeInit();
+  }
 });
