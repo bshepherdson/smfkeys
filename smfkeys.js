@@ -11,6 +11,7 @@ var SMFKeys = {};
 SMFKeys.state = States.OFF;
 SMFKeys.ready = false;
 SMFKeys.loaded = false;
+SMFKeys.enabled = true;
 
 chrome.extension.sendRequest({ type: 'get', site: document.location.hostname }, handleGet);
 
@@ -43,6 +44,10 @@ function saveState() {
 }
 
 function keyPress(event) {
+  if(!SMFKeys.enabled) {
+    return;
+  }
+
   switch(event.keyCode) {
     case 106: // j
       SMFKeys.loaded && moveDown();
@@ -205,6 +210,9 @@ function messages() {
 
 $("document").ready(function() {
   document.addEventListener('keypress', keyPress, false);
+
+  $('input,textarea').focus(function() { SMFKeys.enabled = false; });
+  $('input,textarea').blur(function() { SMFKeys.enabled = true; });
 
   // Determine state from the URL.
   var path = document.location.search;
