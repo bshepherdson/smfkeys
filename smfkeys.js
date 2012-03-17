@@ -107,7 +107,7 @@ function keyPress(event) {
 // Returns the jQuery objects for all the rows in the current state.
 function getRows() {
   if(SMFKeys.state == States.INDEX) {
-    return $('tbody[class="content"] tr');
+    return $('tbody[class="content"] tr.windowbg2');
   } else if(SMFKeys.state == States.BOARD) {
     return $('div[id="messageindex"] table tbody tr');
   } else if(SMFKeys.state == States.TOPIC) {
@@ -274,14 +274,16 @@ $("document").ready(function() {
   $('input,textarea').blur(function() { SMFKeys.enabled = true; });
 
   // Determine state from the URL.
-  var path = document.location.search;
-  if(path.indexOf('?board=') >= 0) {
+  var search = document.location.search;
+  var path = document.location.pathname;
+
+  if(search.indexOf('?board=') >= 0) {
     SMFKeys.state = States.BOARD;
-  } else if(path.indexOf('?topic=') >= 0) {
+  } else if(search.indexOf('?topic=') >= 0) {
     SMFKeys.state = States.TOPIC;
-  } else if(path.indexOf('?action=post') >= 0) {
+  } else if(search.indexOf('?action=post') >= 0) {
     SMFKeys.state = States.POST;
-  } else if(document.location.pathname.match(/index.php$/) && !path) {
+  } else if((path.match(/index.php$/) || path.match('/forum/')) && !search) {
     SMFKeys.state = States.INDEX;
   }
 
