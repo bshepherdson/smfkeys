@@ -147,7 +147,9 @@ function focusRow() {
     var rowBottom = rowTop + rowHeight;
     var windowHeight = $(window).height();
 
-    if(rowTop < window.scrollY) { // need to scroll up
+    if(SMFKeys.state == States.TOPIC) { // always scroll the post to the top of the screen for topics.
+      window.scrollTo(0, rowTop);
+    } else if(rowTop < window.scrollY) { // need to scroll up
       window.scrollTo(0, rowTop);
     } else if (rowBottom > window.scrollY + windowHeight) { // need to scroll down
       if(rowHeight > windowHeight) { // doesn't fit, scroll to rowTop
