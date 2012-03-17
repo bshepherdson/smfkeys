@@ -77,6 +77,8 @@ function focusRow() {
       row.attr('style', 'background: red');
     } else if(SMFKeys.state == States.BOARD) {
       row.attr('style', 'border-left: 3px solid red');
+    } else if(SMFKeys.state == States.THREAD) {
+      row.attr('style', 'border-left: 3px solid red');
     }
 
     var rowTop = row.offset().top;
