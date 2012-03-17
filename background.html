@@ -21,6 +21,7 @@ function onRequest(request, sender, callback) {
     callback(sites[request.site]);
   } else if(request.type == 'put') {
     sites[request.site] = request.state;
+    sites[request.site][States.TOPIC].position = 0;
     saveState();
   }
 }
@@ -48,9 +49,10 @@ function saveState() {
 function loadState() {
   var siteNames = eval(localStorage['siteNames']);
   for(var i = 0; i < siteNames.length; i++) {
-    sites[siteNames[i]][States.INDEX].position = localStorage[site + '_index'];
-    sites[siteNames[i]][States.BOARD].position = localStorage[site + '_board'];
-    sites[siteNames[i]][States.BOARD].id = localStorage[site + '_board_id'];
+    sites[siteNames[i]] = { 1: {}, 2: {}, 3: {}, 4: {} };
+    sites[siteNames[i]][States.INDEX].position = localStorage[siteNames[i] + '_index'];
+    sites[siteNames[i]][States.BOARD].position = localStorage[siteNames[i] + '_board'];
+    sites[siteNames[i]][States.BOARD].id = localStorage[siteNames[i] + '_board_id'];
     sites[siteNames[i]][States.TOPIC].position = 0;
   }
 }

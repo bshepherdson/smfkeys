@@ -173,6 +173,8 @@ function moveDown() { // j
     SMFKeys.data[SMFKeys.state].position++;
     focusRow();
     saveState();
+  } else if($('.pagelinks a').length > 0) {
+    page(+1);
   }
 }
 
@@ -182,8 +184,35 @@ function moveUp() { // k
     SMFKeys.data[SMFKeys.state].position--;
     focusRow();
     saveState();
+  } else if($('.pagelinks a').length > 0) {
+    page(-1);
   }
 }
+
+function page(delta) {
+  var linkbar = $('.pagelinks');
+  var links = $('a', linkbar.first());
+
+  var page = 1;
+  for(; page <= links.length; page++) {
+    if(links.eq(page-1).text() > page) {
+      break;
+    }
+  }
+  // Now page stores the page number we're on currently.
+  page--; // zero-base it
+
+  // If delta > 0, we should click the page+delta-1st link.
+  // If delta < 0, we should click the page+delta'th link.
+  var link;
+  if(delta > 0) {
+    link = links[page+delta-1];
+  } else if(delta < 0) {
+    link = links[page+delta];
+  }
+  window.location = link.href;
+}
+
 
 
 function open() { // o
@@ -250,7 +279,6 @@ $("document").ready(function() {
     SMFKeys.state = States.INDEX;
   }
 
-  window.console.log(SMFKeys.state);
   if(SMFKeys.state && SMFKeys.state != States.OFF) {
     SMFKeys.loaded = true;
     maybeInit();
