@@ -3,10 +3,11 @@
 <script type="text/javascript">
 
 var States = {
+  OFF: 0,
   INDEX: 1,
   BOARD: 2,
   TOPIC: 3,
-  OFF: 4,
+  POST: 4,
 };
 
 var sites = {};
@@ -27,7 +28,7 @@ function onRequest(request, sender, callback) {
 function newState() {
   var data = [];
   data[States.INDEX] = { position: 0 };
-  data[States.BOARD] = { position: 0 };
+  data[States.BOARD] = { position: 0, id: '' };
   data[States.TOPIC] = { position: 0 };
   return data;
 }
@@ -38,7 +39,7 @@ function saveState() {
     siteNames.push(site);
     localStorage[site + '_index'] = sites[site][States.INDEX].position;
     localStorage[site + '_board'] = sites[site][States.BOARD].position;
-    localStorage[site + '_topic'] = sites[site][States.TOPIC].position;
+    localStorage[site + '_board_id'] = sites[site][States.BOARD].id;
   }
 
   localStorage['siteNames'] = '["' + siteNames.join('","') + '"]';
@@ -49,7 +50,8 @@ function loadState() {
   for(var i = 0; i < siteNames.length; i++) {
     sites[siteNames[i]][States.INDEX].position = localStorage[site + '_index'];
     sites[siteNames[i]][States.BOARD].position = localStorage[site + '_board'];
-    sites[siteNames[i]][States.TOPIC].position = localStorage[site + '_topic'];
+    sites[siteNames[i]][States.BOARD].id = localStorage[site + '_board_id'];
+    sites[siteNames[i]][States.TOPIC].position = 0;
   }
 }
  

@@ -35,6 +35,13 @@ function maybeInit() {
         }
       }
     } 
+    // If viewing a different board from the last one.
+    else if(SMFKeys.state == States.BOARD) {
+      if(SMFKeys.data[States.BOARD].id != document.location.search) {
+        SMFKeys.data[States.BOARD].position = 0;
+      }
+      SMFKeys.data[States.BOARD].id = document.location.search;
+    }
     // If posting, focus the post box.
     else if(SMFKeys.state == States.POST) {
       var catbar = $('.cat_bar');
