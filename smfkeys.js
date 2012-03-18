@@ -268,7 +268,12 @@ function refresh() {
 function openNew() {
   if(SMFKeys.state == States.BOARD) { // only makes sense on boards
     getRow(function() {
-      window.location = $('a[id^=newicon]', this).attr('href');
+      var link = $('a[id^=newicon]', this);
+      if(link.length) {
+        window.location = link.attr('href');
+      } else {
+        open();
+      }
     });
   }
 }
